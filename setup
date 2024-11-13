@@ -1,5 +1,6 @@
 #!/bin/bash -eu
 
+index_path=${PEV2_INDEX_PATH:-"$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/pev2-index.html"}
 script="
     <script defer>
       const checkForPlanInput = setInterval(() => {
@@ -25,8 +26,7 @@ script="
       }, 100);
     </script>
 "
-file_name="pev2-index.html"
 
-wget https://www.github.com/dalibo/pev2/releases/latest/download/index.html -O "$file_name"
+wget https://www.github.com/dalibo/pev2/releases/latest/download/index.html -O "$index_path"
 
-printf "%s\n" "$script" | sed -i "/<\/body>/e cat" "$file_name"
+printf "%s\n" "$script" | sed -i "/<\/body>/e cat" "$index_path"
