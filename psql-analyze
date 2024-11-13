@@ -1,0 +1,6 @@
+#!/bin/bash -eu
+
+f=${1:?}
+output="${f%.*}.json"
+pg_cxn_str=${PG_CONNECTION_STRING:-}
+psql $pg_cxn_str -XqAt -t -c "EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT JSON) $(cat "$f")" >"$output"

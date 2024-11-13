@@ -1,0 +1,32 @@
+#!/bin/bash -eu
+
+script="
+    <script defer>
+      const checkForPlanInput = setInterval(() => {
+        const planInput = document.getElementById('planInput');
+        const queryNameInput = document.getElementById('queryName');
+        if (planInput && queryNameInput) {
+          clearInterval(checkForPlanInput);
+          
+          const params = new URLSearchParams(window.location.search);
+
+          const analysis = params.get('analysis');
+          if (analysis) {
+            planInput.value = analysis;
+            planInput.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+
+          const name = params.get('name');
+          if (name) {
+            queryNameInput.value = name;
+            queryNameInput.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+        }
+      }, 100);
+    </script>
+"
+file_name="pev2-index.html"
+
+wget https://www.github.com/dalibo/pev2/releases/latest/download/index.html -O "$file_name"
+
+printf "%s\n" "$script" | sed -i "/<\/body>/e cat" "$file_name"

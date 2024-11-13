@@ -1,0 +1,24 @@
+#!/bin/bash -eu
+
+analysis_file=${1:-}
+browser=${BROWSER:?}
+index_path=${PEV2_INDEX_PATH:-"$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/pev2-index.html"}
+
+if [[ -n "$analysis_file" && -f "$analysis_file" ]]; then
+	analysis=$(cat "$analysis_file" | jq -sRr @uri)
+	name=$(basename "$analysis_file" | cut -d '.' -f 1)
+else
+	analysis=""
+	name=""
+fi
+
+params="?analysis=$analysis&name=$name"
+
+if grep -qi microsoft /proc/version; then
+	wsl_index_path=$(wslpath -w "$index_path")
+	url="file:///$wsl_index_path$params"
+	$browser "$url"
+else
+	url="file:///$index_path$params"
+	$browser "$url"
+fi
